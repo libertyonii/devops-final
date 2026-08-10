@@ -22,3 +22,8 @@ Expected output:
 \`\`\`
 Hello, DevOps!
 \`\`\`
+
+### 4. CI/CD with GitHub Actions
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs `hello.py`
+automatically on every push and pull request to `main`. The status badge
+above reflects the current pipeline state.
