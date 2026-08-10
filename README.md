@@ -1,26 +1,24 @@
-# DevOps Final Assessment
+### 2. Linux & Scripting Basics
+A `scripts/sysinfo.sh` script prints the current user, current date, and
+disk usage.
 
-Name: Liberty Oni
-Date: August 10, 2026
-
-## Project Description
-
-This repository documents an end to end DevOps workflow built using open source
-tools: Git/GitHub, Linux shell scripting, Docker, GitHub Actions (CI/CD),
-HashiCorp Nomad, and Grafana Loki for log monitoring. Each step produces a
-real, usable output consumed by the next step, simulating a small but
-realistic DevOps pipeline.
-
-## Steps
-
-### 1. Git & GitHub Setup
-A public GitHub repository was created and initialized with this README and
-a sample script, `hello.py`, which prints `Hello, DevOps!`.
-
-Run it with:
+Make it executable and run it with:
 \`\`\`bash
-python3 hello.py
+chmod +x scripts/sysinfo.sh
+./scripts/sysinfo.sh
 \`\`\`
 
-More sections (Linux scripting, Docker, CI/CD, Nomad, Monitoring) will be
-added below as each step is completed.
+### 3. Docker Basics
+A `Dockerfile` containerizes `hello.py`. It uses a slim Python 3.13 base
+image, copies `hello.py` into the container, and runs it on startup.
+
+Build and run the container with:
+\`\`\`bash
+docker build -t devops-final-hello .
+docker run devops-final-hello
+\`\`\`
+
+Expected output:
+\`\`\`
+Hello, DevOps!
+\`\`\`
