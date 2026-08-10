@@ -22,6 +22,8 @@ Expected output:
 \`\`\`
 Hello, DevOps!
 \`\`\`
+# DevOps Final Assessment
+![CI](https://github.com/libertyonii/devops-final/actions/workflows/ci.yml/badge.svg)
 
 ### 4. CI/CD with GitHub Actions
 A GitHub Actions workflow (`.github/workflows/ci.yml`) runs `hello.py`
