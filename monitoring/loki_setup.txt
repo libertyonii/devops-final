@@ -1,0 +1,49 @@
+Loki Monitoring Setup
+======================
+
+Loki was run locally via Docker on port 3100 using the default config:
+
+  docker run -d --name loki -p 3100:3100 grafana/loki:3.0.0 -config.file=/etc/loki/local-config.yaml
+
+Health check:
+  curl http://localhost:3100/ready
+  -> returns "ready"
+
+Log forwarding setup:
+----------------------
+Promtail was used to scrape logs from all running Docker containers and
+forward them to Loki. A promtail-config.yaml file was created, defining a
+Docker service discovery scrape config that tails container stdout/stderr
+via the Docker socket.
+
+Promtail was run with:
+
+  docker run -d --name promtail \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$(pwd)/promtail-config.yaml:/etc/promtail/config.yaml" \
+    --network host \
+    grafana/promtail:3.0.0 -config.file=/etc/promtail/config.yaml
+
+Promtail automatically detected and attached to running containers
+(confirmed via `docker logs promtail`, showing "added Docker target"
+events for both the Loki and Promtail containers themselves).
+
+Command used to view logs:
+----------------------------
+Logs were queried directly from Loki's HTTP API using:
+
+  curl -G -s "http://localhost:3100/loki/api/v1/query_range" \
+    --data-urlencode 'query={container=~".+"}'
+
+This returned live log streams from the monitored containers in JSON
+format, confirming the full pipeline (container -> Promtail -> Loki ->
+query) works end-to-end.
+
+Notes:
+- For long-running services, all container logs are captured continuously.
+- Short-lived containers (like the one-shot hello.py task) may exit before
+  Promtail's next scrape interval (5s), so their logs may not always
+  appear in Loki depending on timing, this is expected behavior for
+  batch/one-shot workloads and would be handled differently in production
+  (e.g. shipping logs via a sidecar, or using `docker logs` directly for
+  short-lived job output).

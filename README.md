@@ -58,3 +58,25 @@ Since `hello.py` exits immediately after printing, Nomad
 after the process exits — this is expected for a one-shot script under a
 service-type job, but the container itself runs and prints correctly, as
 shown above.
+
+### 6. Monitoring with Grafana Loki
+Loki was run locally via Docker to collect logs, with Promtail forwarding
+container logs to it. Full setup details, commands used, and notes on
+short lived container log timing are documented in
+`monitoring/loki_setup.txt`.
+
+Quick start:
+\`\`\`bash
+docker run -d --name loki -p 3100:3100 grafana/loki:3.0.0 -config.file=/etc/loki/local-config.yaml
+docker run -d --name promtail \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$(pwd)/promtail-config.yaml:/etc/promtail/config.yaml" \
+  --network host \
+  grafana/promtail:3.0.0 -config.file=/etc/promtail/config.yaml
+\`\`\`
+
+View logs:
+\`\`\`bash
+curl -G -s "http://localhost:3100/loki/api/v1/query_range" \
+  --data-urlencode 'query={container=~".+"}'
+\`\`\`
